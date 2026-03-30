@@ -41,6 +41,16 @@ cp skills/n8n-error-setup/SKILL.md your-project/.claude/skills/n8n-error-setup/
 2. 환경변수 설정 (각 스킬 폴더의 `.env.example` 참고)
 3. Claude Code에서 자연어로 요청하면 끝
 
+## 영상으로 보기
+
+| 스킬 | 영상 |
+|------|------|
+| n8n-error-setup | [n8n 워크플로우 100개에 에러 알림 한 번에 심는 법](유튜브 URL) |
+
 ## 요구사항
 
 - [Claude Code](https://claude.ai/claude-code) 설치 필요
+
+## 라이선스
+
+MIT
