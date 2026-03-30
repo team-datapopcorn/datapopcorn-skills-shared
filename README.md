@@ -13,7 +13,7 @@ datapopcorn의 Claude Code 스킬 모음입니다.
 ### 방법 1: 설치 스크립트 (특정 스킬만)
 
 ```bash
-git clone https://github.com/datapopcorn/datapopcorn-skills-shared.git /tmp/datapopcorn-skills-shared
+git clone https://github.com/team-datapopcorn/datapopcorn-skills-shared.git /tmp/datapopcorn-skills-shared
 /tmp/datapopcorn-skills-shared/install.sh n8n-error-setup /path/to/your-project
 ```
 
