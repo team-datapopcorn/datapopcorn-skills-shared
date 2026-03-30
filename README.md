@@ -21,14 +21,20 @@ Claude Code: 스킬을 읽고 → 스크립트 생성 → API 호출 → 설정 
 
 ## 설치 방법
 
-### 방법 1: 설치 스크립트 (원하는 스킬만)
+### 방법 1: npx skills add (추천)
+
+```bash
+npx skills add team-datapopcorn/datapopcorn-skills-shared --skill n8n-error-setup
+```
+
+### 방법 2: 설치 스크립트
 
 ```bash
 git clone https://github.com/team-datapopcorn/datapopcorn-skills-shared.git /tmp/datapopcorn-skills-shared
 /tmp/datapopcorn-skills-shared/install.sh n8n-error-setup /path/to/your-project
 ```
 
-### 방법 2: 수동 복사
+### 방법 3: 수동 복사
 
 ```bash
 mkdir -p your-project/.claude/skills/n8n-error-setup

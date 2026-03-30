@@ -2,6 +2,12 @@
 
 n8n 워크플로우에 에러 알림을 일괄 설정하고, 신규 워크플로우를 매일 자동 감지하는 워크플로우를 배포하는 Claude Code 스킬입니다.
 
+## 설치
+
+```bash
+npx skills add team-datapopcorn/datapopcorn-skills-shared --skill n8n-error-setup
+```
+
 ## 이런 분들에게 필요합니다
 
 - n8n 워크플로우가 많은데 에러 알림이 제각각이거나 빠져 있는 경우
