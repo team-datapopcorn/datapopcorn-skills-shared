@@ -809,7 +809,7 @@ function buildGlobe(){
     c.root.visible=true; activeCity=c; Hcur=c.H;
     [L1,L2].forEach((L,i)=>{ const d=c.lights[i]; L.color.copy(C(d.color)); L.position.set(d.pos[0],d.pos[1],d.pos[2]); L.distance=d.d; L.userData.base=d.i; L.intensity=d.i; });
     return c.label; }
-  setCityKey('seoul');
+  setCityKey(cfg.cityKey || 'seoul');
   /* --- 눈송이 (구슬 밖으로 새지 않도록 반경 클램프) --- */
   const N=cfg.snowCount, Rn=rng(99);
   const b0=new Float32Array(N*3), par=new Float32Array(N*6), sizes=new Float32Array(N), posArr=new Float32Array(N*3);

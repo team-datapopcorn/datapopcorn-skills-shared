@@ -15,7 +15,7 @@ AI로 직접 써먹는 스킬 모음입니다. 콘텐츠 제작, 업무 자동�
 
 | 명령 | 용도 | 추가 준비 |
 |---|---|---|
-| `/datapopcorn:snowball` | 도시 스노글로브 | Chrome |
+| `/datapopcorn:snowball` | 원하는 지역의 스노글로브 | Chrome |
 | `/datapopcorn:sunset-flight` | 노을 비행 | Chrome |
 | `/datapopcorn:paper-motion` | 종이 브랜드 모션 | Chrome |
 | `/datapopcorn:n8n-error-setup` | n8n 에러 알림 설정 | N8N_URL, N8N_API_KEY |
