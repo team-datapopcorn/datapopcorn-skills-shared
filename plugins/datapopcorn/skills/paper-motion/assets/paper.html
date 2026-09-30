@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>브랜드 페이퍼 필름 — 10초 · 9:16</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ece4d6;--panel:#f6f0e4;--ink:#26232a;--mute:#6f6759;--line:#d8cdb9;--pink:#ee5a7c}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{height:100vh;height:100dvh;background:var(--bg);color:var(--ink);font:400 14px/1.4 Inter,"Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;-webkit-text-size-adjust:100%}
+header{padding:12px 16px 4px;text-align:center}
+h1{margin:0;font:600 16px/1.2 Inter,"Noto Sans KR",sans-serif;letter-spacing:-.01em}
+header p{margin:2px 0 0;color:var(--mute);font-size:12px}
+#stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:6px 12px}
+#cv{height:100%;max-width:100%;aspect-ratio:9/16;background:#f3e9d8;border-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 14px 40px rgba(60,40,20,.22),0 2px 6px rgba(60,40,20,.15);display:block}
+footer{width:min(100%,560px);margin:0 auto;padding:6px 14px calc(12px + env(safe-area-inset-bottom,0px));display:grid;gap:8px;max-height:46dvh;overflow-y:auto}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:500 13px/1 Inter,"Noto Sans KR",sans-serif;padding:11px 14px;border-radius:12px;cursor:pointer;min-height:40px}
+.btn:hover{border-color:#b9ab90}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.primary{background:var(--ink);color:#f6f0e4;border-color:var(--ink)}
+.btn.accent{background:var(--pink);color:#fff;border-color:var(--pink)}
+.time{font-variant-numeric:tabular-nums;color:var(--mute);font-size:12px;min-width:74px;text-align:right}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--pink)}
+.field{flex:1 1 180px;display:grid;gap:3px}
+.field label{font-size:11px;color:var(--mute)}
+.field input{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:500 14px/1.2 Inter,"Noto Sans KR",sans-serif;padding:10px 12px;border-radius:10px;min-height:40px}
+.field input:focus,.btn:focus-visible{outline:2px solid var(--pink);outline-offset:1px}
+#status{font-size:12px;color:var(--mute);min-height:16px}
+#status a{color:var(--pink)}
+@media (max-width:440px){.btn{padding:10px 11px}header p{display:none}}
+</style>
+</head>
+<body>
+<header><h1>브랜드 페이퍼 필름</h1><p>10초 · 9:16 · 코드로만 만든 종이 접힘 모션</p></header>
+<main id="stage"><canvas id="cv" width="720" height="1280" aria-label="브랜드 종이 필름 미리보기"></canvas></main>
+<footer>
+  <div class="row">
+    <button class="btn primary" id="btnPlay" type="button">일시정지</button>
+    <button class="btn" id="btnReplay" type="button">다시 재생</button>
+    <input id="bar" type="range" min="0" max="1000" value="0" aria-label="진행 위치">
+    <span class="time" id="time">0.0 / 10.0s</span>
+  </div>
+  <div class="row">
+    <div class="field"><label for="inName">브랜드명</label><input id="inName" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="DataPopcorn"></div>
+    <div class="field"><label for="inSlogan">슬로건</label><input id="inSlogan" type="text" maxlength="34" autocomplete="off" spellcheck="false" placeholder="AI, made useful."></div>
+  </div>
+  <div class="row">
+    <button class="btn accent" id="btnRec" type="button">WebM 저장 (720×1280 · 30fps)</button>
+    <span id="status" role="status"></span>
+  </div>
+</footer>
+
+<script>
+(()=>{
+'use strict';
+/* =====================================================================
+   브랜드 페이퍼 필름 — 종이 접힘 엔진 (Canvas 2D, 외부 이미지/영상/라이브러리 없음)
+   ▸ 모든 장면은 시간 t(초)의 순수 함수입니다. 재생·스크럽·녹화가 같은 코드를 씁니다.
+   ▸ 접힘 축(수직/수평), 앞뒷면, 원근, 조명, 접촉 그림자를 직접 계산합니다.
+   ===================================================================== */
+const CONFIG={
+  duration:10, width:720, height:1280, fps:30,
+  name:'DataPopcorn',              // 브랜드명 (UI에서 교체 가능)
+  slogan:'AI, made useful.',       // 슬로건 (UI에서 교체 가능)
+  palette:{ cream:'#f3e9d8', pink:'#ee5a7c', ink:'#26232a' }
+};
+const W=CONFIG.width, H=CONFIG.height, DUR=CONFIG.duration, CX=W/2, CY=H/2, D=2400, MX=72, rad=Math.PI/180;
+const FONT='Inter,"Noto Sans KR","Helvetica Neue",Arial,sans-serif';
+const $=s=>document.querySelector(s);
+const cv=$('#cv'), g=cv.getContext('2d');
+const state={name:CONFIG.name,slogan:CONFIG.slogan,t:0,playing:true,recording:false};
+
+/* ---------- 작은 수학 도구 ---------- */
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2, easeO=x=>1-Math.pow(1-x,3), easeI=x=>x*x*x;
+const prog=(t,a,d)=>cl((t-a)/d);
+const V3=(x,y,z)=>({x,y,z}), add=(a,b)=>V3(a.x+b.x,a.y+b.y,a.z+b.z), mul=(a,k)=>V3(a.x*k,a.y*k,a.z*k);
+const cross=(a,b)=>V3(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x), dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
+const LIGHT=(()=>{const v=V3(.34,-.55,.72),l=Math.hypot(v.x,v.y,v.z);return V3(v.x/l,v.y/l,v.z/l);})();
+const proj=p=>{const s=D/(D-p.z);return{x:CX+(p.x-CX)*s,y:CY+(p.y-CY)*s};};
+function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+
+/* ---------- 종이 질감: 은은한 얼룩 + 미세 입자 + 섬유 ---------- */
+function paperTex(base,seed,fibers){
+  const c=mk(W,H),x=c.getContext('2d'),R=rng(seed);
+  x.fillStyle=base;x.fillRect(0,0,W,H);
+  for(let i=0;i<26;i++){const px=R()*W,py=R()*H,r=140+R()*340,gr=x.createRadialGradient(px,py,0,px,py,r);
+    gr.addColorStop(0,R()<.5?'rgba(120,90,60,.045)':'rgba(255,255,255,.07)');gr.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gr;x.fillRect(0,0,W,H);}
+  const id=x.getImageData(0,0,W,H),d=id.data;
+  for(let i=0;i<d.length;i+=4){const n=(R()-.5)*13;d[i]+=n;d[i+1]+=n;d[i+2]+=n;}
+  x.putImageData(id,0,0);
+  for(let i=0;i<1100;i++){const px=R()*W,py=R()*H,l=6+R()*28,a=R()*6.283;
+    x.strokeStyle=R()<.5?`rgba(255,255,255,${(.07+R()*.13)*fibers})`:`rgba(90,58,40,${(.04+R()*.08)*fibers})`;
+    x.lineWidth=.5+R()*.7;x.beginPath();x.moveTo(px,py);
+    x.quadraticCurveTo(px+Math.cos(a+.6)*l*.5,py+Math.sin(a+.6)*l*.5,px+Math.cos(a)*l,py+Math.sin(a)*l);x.stroke();}
+  return c;
+}
+
+/* ---------- 타이포 ---------- */
+const isLatin=s=>!/[^\u0000-\u024F]/.test(s);
+function splitName(n){
+  const bal=parts=>{let best=1,diff=1e9;for(let i=1;i<parts.length;i++){const a=parts.slice(0,i).join(' ').length,b=parts.slice(i).join(' ').length;if(Math.abs(a-b)<diff){diff=Math.abs(a-b);best=i;}}
+    return[parts.slice(0,best).join(' '),parts.slice(best).join(' ')];};
+  const sp=n.split(/\s+/).filter(Boolean); if(sp.length>=2) return bal(sp);
+  const cc=isLatin(n)?n.match(/[A-Z][a-z0-9]*|[a-z0-9]+/g):null; if(cc&&cc.length>=2&&cc.join('')===n) return bal(cc);
+  return [n];
+}
+const setLS=(x,px)=>{if('letterSpacing' in x)x.letterSpacing=px+'px';};
+function meas(x,txt,weight,size,ls){x.font=`${weight} ${size}px ${FONT}`;setLS(x,ls*size);const w=x.measureText(txt).width;return w;}
+function layout(){
+  const x=mk(4,4).getContext('2d');
+  const name=(state.name||'').trim()||'Brand', slogan=(state.slogan||'').trim();
+  const lines=splitName(name);
+  const w100=Math.max(...lines.map(l=>meas(x,l,600,100,-.025)));
+  const fs=Math.min(lines.length>1?150:128,100*(W-2*MX)/w100), lh=fs*1.0, cap=fs*.73, desc=fs*.2;
+  const nameH=(lines.length-1)*lh+cap+desc;
+  let sfs=36; if(slogan){const sw=meas(x,slogan,400,100,0);sfs=Math.min(36,100*(W-2*MX)/sw);}
+  const gap=slogan?64:0, sloganH=slogan?sfs*1.2:0, total=nameH+gap+sloganH;
+  const top=Math.round(700-total/2), base=lines.map((_,i)=>top+cap+i*lh);
+  const nameBottom=top+nameH, sTop=nameBottom+gap-sfs*.9, sBase=nameBottom+gap+sfs*.15;
+  return{name,lines,slogan,fs,lh,cap,top,base,nameBottom,sfs,sBase,sTop,sBottom:sBase+sfs*.35,total};
+}
+function inkText(x,txt,px,py,size,weight,ls,color,mode){
+  x.save();x.globalCompositeOperation=mode||'multiply';x.font=`${weight} ${size}px ${FONT}`;setLS(x,ls*size);x.fillStyle=color;x.textBaseline='alphabetic';x.textAlign='left';x.fillText(txt,px,py);x.restore();
+}
+const initials=lines=>lines.length>1?lines.map(l=>[...l][0]).join('').toUpperCase():[...lines[0]].slice(0,2).join('').toUpperCase();
+
+/* ---------- 텍스처 세트 (입력이 바뀔 때만 다시 만든다) ---------- */
+let T={},LAY=null;
+const BASE={cream:paperTex(CONFIG.palette.cream,11,1),pink:paperTex(CONFIG.palette.pink,23,.8)};
+function copyOf(c){const n=mk(c.width,c.height);n.getContext('2d').drawImage(c,0,0);return n;}
+function rebuild(){
+  LAY=layout(); const P=CONFIG.palette, L=LAY;
+  T.cream=BASE.cream; T.pink=BASE.pink;
+  // 시작 장면의 큰 글자(브랜드명 첫 줄의 일부만 보임)
+  T.posterA=copyOf(BASE.cream); { const x=T.posterA.getContext('2d'),first=L.lines[0],w100=meas(x,first,600,100,-.03);
+    const fs=cl(100*W*1.28/w100,240,560); inkText(x,first,-fs*.05,H*.74,fs,600,-.03,P.ink); }
+  // 부채로 펼쳐지는 겹친 포스터 3장
+  const sheet=(w,base,fn)=>{const c=copyOf(base),x=c.getContext('2d');c.width=w;fn(x);return c;};
+  T.s1=(()=>{const c=mk(600,H),x=c.getContext('2d');x.drawImage(BASE.cream,0,0,600,H,0,0,600,H);
+    const t2=L.lines[L.lines.length-1],w100=meas(x,t2,600,100,-.03),fs=cl(100*600*1.12/w100,200,440);
+    inkText(x,t2,-fs*.04,H*.83,fs,600,-.03,P.ink);return c;})();
+  T.s2=(()=>{const c=mk(500,H),x=c.getContext('2d');x.drawImage(BASE.pink,0,0,500,H,0,0,500,H);
+    inkText(x,L.name,48,H-92,Math.min(50,100*(500-96)/meas(x,L.name,600,100,-.02)),600,-.02,P.cream,'source-over');return c;})();
+  T.s3=(()=>{const c=mk(400,H),x=c.getContext('2d');x.drawImage(BASE.cream,0,0,400,H,0,0,400,H);
+    const ini=initials(L.lines),w100=meas(x,ini,600,100,-.03),fs=Math.min(340,100*(400-72)/w100);
+    inkText(x,ini,(400-w100*fs/100)/2,H*.55,fs,600,-.03,P.ink);return c;})();
+  // 마지막 구도 (종이 + 브랜드명 + 슬로건)
+  T.posterF=copyOf(BASE.cream); { const x=T.posterF.getContext('2d');
+    L.lines.forEach((l,i)=>inkText(x,l,L.fs*.0+MX,L.base[i],L.fs,600,-.025,P.ink));
+    if(L.slogan) inkText(x,L.slogan,MX+2,L.sBase,L.sfs,400,0,'rgba(38,35,42,.82)'); }
+  T.pageC=mk(W,H);
+}
+
+/* ---------- 종이 패널: 3D 사각형을 원근 투영해 띠 단위로 그린다 ---------- */
+function drawPanel(x,P){
+  const O=P.O,U=P.U,Vv=P.V; let n=cross(U,Vv); const nl=Math.hypot(n.x,n.y,n.z); if(nl<1e-6) return;
+  n=V3(n.x/nl,n.y/nl,n.z/nl); if(Math.abs(n.z)<.004) return;
+  const front=n.z>0, src=front?P.front:P.back; if(!src) return;
+  const q=(u,v)=>proj(add(O,add(mul(U,u),mul(Vv,v))));
+  const c00=q(0,0),c10=q(1,0),c11=q(1,1),c01=q(0,1);
+  const poly=()=>{x.beginPath();x.moveTo(c00.x,c00.y);x.lineTo(c10.x,c10.y);x.lineTo(c11.x,c11.y);x.lineTo(c01.x,c01.y);x.closePath();};
+  const zc=O.z+(U.z+Vv.z)/2, solid=P.alpha==null||P.alpha>=.999;
+  if(solid&&zc>2.5){ // 접촉·드롭 그림자: 높이에 따라 번짐과 거리가 커진다
+    x.save();x.shadowColor=`rgba(40,22,18,${Math.min(.38,.14+zc*.0016)})`;x.shadowBlur=5+zc*.17;x.shadowOffsetX=zc*.15;x.shadowOffsetY=zc*.21;
+    x.fillStyle='#000';poly();x.fill();x.restore();
+  }
+  x.save(); if(!solid) x.globalAlpha=P.alpha; x.imageSmoothingQuality='high';
+  if(P.axis==='v'){
+    const len=Math.max(Math.hypot(c10.x-c00.x,c10.y-c00.y),Math.hypot(c11.x-c01.x,c11.y-c01.y)), nS=cl(Math.ceil(len/3),1,90);
+    for(let i=0;i<nS;i++){
+      const u0=i/nS,u1=(i+1)/nS,a0=q(u0,0),a1=q(u1,0),b0=q(u0,1),b1=q(u1,1); let o,ex,ey,f0,f1;
+      if(front){o=a0;ex=V3(a1.x-a0.x,a1.y-a0.y,0);ey=V3(b0.x-a0.x,b0.y-a0.y,0);f0=u0;f1=u1;}
+      else{o=a1;ex=V3(a0.x-a1.x,a0.y-a1.y,0);ey=V3(b1.x-a1.x,b1.y-a1.y,0);f0=1-u1;f1=1-u0;}
+      const sw=(f1-f0)*src.sw, exl=Math.hypot(ex.x,ex.y)||1, k=(exl+.9)/exl;
+      x.setTransform(ex.x*k/sw,ex.y*k/sw,ey.x/src.sh,ey.y/src.sh,o.x,o.y);
+      x.drawImage(src.c,src.sx+f0*src.sw,src.sy,sw,src.sh,0,0,sw,src.sh);
+    }
+  }else{
+    const len=Math.max(Math.hypot(c01.x-c00.x,c01.y-c00.y),Math.hypot(c11.x-c10.x,c11.y-c10.y)), nS=cl(Math.ceil(len/3),1,90);
+    for(let j=0;j<nS;j++){
+      const v0=j/nS,v1=(j+1)/nS,a0=q(0,v0),a1=q(1,v0),b0=q(0,v1); let o,ex,ey,f0,f1;
+      if(front){o=a0;ex=V3(a1.x-a0.x,a1.y-a0.y,0);ey=V3(b0.x-a0.x,b0.y-a0.y,0);f0=v0;f1=v1;}
+      else{const c0=q(0,v1),c1=q(1,v1);o=c0;ex=V3(c1.x-c0.x,c1.y-c0.y,0);ey=V3(a0.x-c0.x,a0.y-c0.y,0);f0=1-v1;f1=1-v0;}
+      const sh=(f1-f0)*src.sh, eyl=Math.hypot(ey.x,ey.y)||1, k=(eyl+.9)/eyl;
+      x.setTransform(ex.x/src.sw,ex.y/src.sw,ey.x*k/sh,ey.y*k/sh,o.x,o.y);
+      x.drawImage(src.c,src.sx,src.sy+f0*src.sh,src.sw,sh,0,0,src.sw,sh);
+    }
+  }
+  x.restore();
+  // 조명: 면의 방향에 따라 밝기 결정 (평평한 정면 = 1)
+  const nf=front?n:V3(-n.x,-n.y,-n.z); let lum=.52+.48*dot(nf,LIGHT)/LIGHT.z; if(!front) lum*=.97; lum=cl(lum,.28,1.15);
+  x.save(); if(!solid) x.globalAlpha=P.alpha; poly();
+  if(lum<1){x.fillStyle=`rgba(45,25,20,${(1-lum)*.75})`;x.fill();}else if(lum>1.005){x.fillStyle=`rgba(255,250,240,${(lum-1)*.7})`;x.fill();}
+  // 접힘선 근처의 앰비언트 오클루전
+  const amp=(P.ao==null?.32:P.ao)*Math.sqrt(Math.max(0,1-n.z*n.z));
+  if(amp>.004){const hu=P.hinge, hm=P.axis==='v'?{x:(q(hu,0).x+q(hu,1).x)/2,y:(q(hu,0).y+q(hu,1).y)/2}:{x:(q(0,hu).x+q(1,hu).x)/2,y:(q(0,hu).y+q(1,hu).y)/2},
+      fm=P.axis==='v'?{x:(q(1-hu,0).x+q(1-hu,1).x)/2,y:(q(1-hu,0).y+q(1-hu,1).y)/2}:{x:(q(0,1-hu).x+q(1,1-hu).x)/2,y:(q(0,1-hu).y+q(1,1-hu).y)/2};
+    const gr=x.createLinearGradient(hm.x,hm.y,fm.x,fm.y);gr.addColorStop(0,`rgba(40,20,20,${amp})`);gr.addColorStop(.5,`rgba(40,20,20,${amp*.18})`);gr.addColorStop(1,'rgba(40,20,20,0)');
+    poly();x.fillStyle=gr;x.fill();}
+  poly();x.lineWidth=1;x.strokeStyle=`rgba(60,36,30,${P.edge==null?.24:P.edge})`;x.stroke();
+  x.restore();
+}
+/* 수직 접힘축 플랩: hx에서 접히고 dir(+1 오른쪽/-1 왼쪽)으로 펼쳐진다. theta 0=평면, 90=수직, 180=뒤집혀 접힘 */
+function flapV(o){
+  const th=o.theta*rad,w=o.w,y0=o.y0==null?0:o.y0,y1=o.y1==null?H:o.y1,dir=o.dir, d=V3(dir*Math.cos(th)*w,0,Math.sin(th)*w), V=V3(0,y1-y0,0);
+  const O=dir>0?V3(o.hx,y0,0):V3(o.hx+d.x,y0,d.z), U=dir>0?d:V3(-d.x,0,-d.z);
+  return{O,U,V,axis:'v',hinge:dir>0?0:1,front:o.front,back:o.back,alpha:o.alpha,edge:o.edge,ao:o.ao,zc:O.z+(U.z+V.z)/2};
+}
+/* 수평 접힘축 플랩: hy에서 접히고 dirY(+1 아래로/-1 위로)로 펼쳐진다 */
+function flapH(o){
+  const th=o.theta*rad,h=o.h,x0=o.x0==null?0:o.x0,x1=o.x1==null?W:o.x1,dirY=o.dirY, d=V3(0,dirY*Math.cos(th)*h,Math.sin(th)*h), U=V3(x1-x0,0,0);
+  const O=dirY>0?V3(x0,o.hy,0):V3(x0,o.hy+d.y,d.z), Vv=dirY>0?d:V3(0,-d.y,-d.z);
+  return{O,U,V:Vv,axis:'h',hinge:dirY>0?0:1,front:o.front,back:o.back,alpha:o.alpha,edge:o.edge,ao:o.ao,zc:O.z+(U.z+Vv.z)/2};
+}
+const src=(c,sx,sy,sw,sh)=>({c,sx,sy,sw,sh});
+
+/* ---------- 장면 구성 ---------- */
+// 0–2.4초: 핑크 접지 종이가 펼쳐진다(앞면 핑크 / 뒷면 크림). 첫 프레임부터 완성된 구도.
+const FA=[{w:620,th0:72,open:176,t0:0,dur:2.1},{w:520,th0:54,open:176,t0:.2,dur:2.1},{w:420,th0:36,open:176,t0:.4,dur:2.1}];
+// 2.2–4.6초: 오른쪽 척추에서 겹친 포스터 3장이 부채처럼 차례로 펼쳐진다
+const FB=[{w:600,end:9,t0:2.2,k:'s1'},{w:500,end:24,t0:2.5,k:'s2'},{w:400,end:42,t0:2.8,k:'s3'}];
+function sceneA(x,t){
+  x.drawImage(T.posterA,0,0);
+  const list=[];
+  FA.forEach(f=>{const p=ease(prog(t,f.t0,f.dur));
+    if(p<1) list.push(flapV({hx:730,w:f.w,dir:-1,theta:f.th0+(f.open-f.th0)*p,front:src(T.pink,0,0,f.w,H),back:src(T.cream,0,0,f.w,H)}));});
+  if(t>2.15) FB.forEach((f,i)=>{const p=ease(prog(t,f.t0,1.7)),sway=p>=1?1.4*Math.sin((t-f.t0-1.7)*1.5+i*1.3):0;
+    list.push(flapV({hx:730,w:f.w,dir:-1,theta:178+(f.end-178)*p+sway,front:src(T[f.k],0,0,f.w,H),back:src(T.cream,0,0,f.w,H)}));});
+  list.sort((a,b)=>a.zc-b.zc).forEach(p=>drawPanel(x,p));
+}
+// 4.85–6.5초: 크림 종이 띠 5줄이 오른쪽에서 왼쪽으로 병풍처럼 펼쳐지며 앞 장면을 덮는다
+function bands(x,t){
+  const RH=Math.ceil(H/3), SW=120;
+  for(let r=0;r<3;r++){
+    const p=prog(t,4.8+r*.2,1.25); if(p<=0) continue; const q=6*ease(p), y0=r*RH, y1=r<2?y0+RH+2:H;
+    for(let j=0;j<6;j++){const loc=cl(q-j); if(loc<=0) continue; const hx=W-j*SW, th=180*(1-ease(loc));
+      drawPanel(x,flapV({hx,y0,y1,w:SW,dir:-1,theta:th,edge:.1,front:src(T.cream,hx-SW,y0,SW,y1-y0),back:src(T.cream,hx-SW,y0,SW,y1-y0)}));}
+  }
+}
+// 6.5–9.35초: 수평 접힘 셔터가 열리며 차콜 브랜드명이 여백 속에서 드러나고, 핑크 탭이 마지막으로 접힌다
+function finalPage(x,t){
+  const L=LAY; x.drawImage(T.posterF,0,0);
+  // 브랜드명 셔터: 위쪽 축, 뒤로 넘어가 위 여백에 눕는다
+  const nHy=L.top-36, nH=(L.nameBottom+30)-nHy, pn=ease(prog(t,6.55,.85));
+  if(t<8.0&&t>=0){const a=1-prog(t,7.5,.3); if(a>0) drawPanel(x,flapH({hy:nHy,h:nH,dirY:1,theta:180*pn,alpha:a<1?a:undefined,edge:.12,front:src(T.cream,0,nHy,W,nH),back:src(T.cream,0,Math.max(0,nHy-nH),W,nH)}));}
+  // 슬로건 셔터: 아래쪽 축, 아래 여백으로 넘어간다
+  if(L.slogan&&t<8.2){const sHy=L.sBottom+24, sTop=L.nameBottom+30, sH=sHy-sTop, ps=ease(prog(t,7.2,.65)), a=1-prog(t,7.85,.3);
+    if(a>0) drawPanel(x,flapH({hy:sHy,h:sH,dirY:-1,theta:180*ps,alpha:a<1?a:undefined,edge:.12,front:src(T.cream,0,sTop,W,sH),back:src(T.cream,0,sHy,W,sH)}));}
+  // 핑크 탭: 위쪽 축에서 떨어지듯 접혀 내려오고 종이 탄성으로 한 번 튕긴다
+  if(t>=7.7){const tw=92,th=60,ty=L.top-118, e=t-8.3; let ang=170*(1-easeI(prog(t,7.75,.55)));
+    if(e>0) ang=15*Math.exp(-e*7.5)*Math.abs(Math.sin(e*19)); if(e>.7) ang=0;
+    drawPanel(x,flapH({hy:ty,h:th,x0:MX,x1:MX+tw,dirY:1,theta:ang,front:src(T.pink,0,0,tw,th),back:src(T.cream,0,0,tw,th)}));}
+}
+// 9.35–10초: 완성 화면이 왼쪽 접힘축으로 넘어가며(페이지 턴) 첫 장면의 접힘으로 이어진다
+function pageTurn(x,t){
+  sceneA(x,0);
+  const px=T.pageC.getContext('2d'); px.setTransform(1,0,0,1,0,0); px.clearRect(0,0,W,H); finalPage(px,9); 
+  drawPanel(x,flapV({hx:0,w:W,dir:1,theta:180*ease(prog(t,9.35,.65)),front:src(T.pageC,0,0,W,H),back:src(T.cream,0,0,W,H)}));
+}
+
+/* ---------- 프레임 렌더 (t는 0~10초) ---------- */
+let vig=null;
+function render(t){
+  t=cl(t,0,DUR-1/600);
+  g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.imageSmoothingEnabled=true;
+  if(t>=9.35) pageTurn(g,t);
+  else if(t>=6.5) finalPage(g,t);
+  else{ sceneA(g,t); if(t>=4.8) bands(g,t); }
+  if(!vig){vig=g.createRadialGradient(CX,CY*.9,H*.28,CX,CY,H*.78);vig.addColorStop(0,'rgba(60,35,25,0)');vig.addColorStop(1,'rgba(60,35,25,.13)');}
+  g.setTransform(1,0,0,1,0,0);g.fillStyle=vig;g.fillRect(0,0,W,H);
+  const lg=g.createLinearGradient(0,0,W,H);lg.addColorStop(0,'rgba(255,248,235,.06)');lg.addColorStop(1,'rgba(60,35,25,.05)');g.fillStyle=lg;g.fillRect(0,0,W,H);
+}
+
+/* ---------- 재생 · 진행바 · 입력 ---------- */
+const els={play:$('#btnPlay'),replay:$('#btnReplay'),bar:$('#bar'),time:$('#time'),name:$('#inName'),slogan:$('#inSlogan'),rec:$('#btnRec'),status:$('#status')};
+els.name.value=state.name;els.slogan.value=state.slogan;
+const setStatus=(m,html)=>{if(html)els.status.innerHTML=m;else els.status.textContent=m||'';};
+const lockUI=b=>{[els.play,els.replay,els.bar,els.name,els.slogan].forEach(e=>e.disabled=b);};
+function updateUI(){els.time.textContent=`${state.t.toFixed(1)} / ${DUR.toFixed(1)}s`;if(document.activeElement!==els.bar)els.bar.value=Math.round(state.t/DUR*1000);els.play.textContent=state.playing?'일시정지':'재생';}
+els.play.addEventListener('click',()=>{state.playing=!state.playing;updateUI();});
+els.replay.addEventListener('click',()=>{state.t=0;state.playing=true;updateUI();});
+els.bar.addEventListener('input',()=>{state.t=els.bar.value/1000*DUR;state.playing=false;updateUI();});
+let rb=0;const later=()=>{clearTimeout(rb);rb=setTimeout(rebuild,120);};
+els.name.addEventListener('input',()=>{state.name=els.name.value;later();});
+els.slogan.addEventListener('input',()=>{state.slogan=els.slogan.value;later();});
+
+/* ---------- WebM 저장: 캔버스 720×1280 그대로, 0초부터 한 루프 ---------- */
+function pickMime(){const c=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];return c.find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||'';}
+async function saveBlob(blob,name){
+  try{if(window.claude&&claude.use){const dl=claude.use('downloads');const buf=new Uint8Array(await blob.arrayBuffer());let s='';for(let i=0;i<buf.length;i+=0x8000)s+=String.fromCharCode.apply(null,buf.subarray(i,i+0x8000));
+      await dl.save({filename:name,data:btoa(s)});return{ok:true,how:'claude'};}}catch(e){}
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  return{ok:true,url,how:'anchor'};
+}
+els.rec.addEventListener('click',()=>{
+  if(state.recording) return; if(!window.MediaRecorder||!cv.captureStream){setStatus('이 브라우저는 WebM 녹화를 지원하지 않습니다. 최신 Chrome·Edge·Firefox를 사용해 주세요.');return;}
+  const mime=pickMime(), stream=cv.captureStream(CONFIG.fps), rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:9e6}:{videoBitsPerSecond:9e6}), chunks=[];
+  rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  rec.onstop=async()=>{
+    state.recording=false;lockUI(false);els.rec.disabled=false;stream.getTracks().forEach(t=>t.stop());
+    const blob=new Blob(chunks,{type:'video/webm'}),slug=(state.name||'brand').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'brand',fn=`brand-film-${slug}.webm`;
+    if(!blob.size){setStatus('녹화 데이터가 비어 있습니다. 다시 시도해 주세요.');return;}
+    const r=await saveBlob(blob,fn);
+    setStatus(r.how==='anchor'?`저장 요청 완료 · <a href="${r.url}" download="${fn}">${fn}</a> (${(blob.size/1048576).toFixed(1)}MB)`:`${fn} 저장 완료`,true);
+  };
+  state.recording=true;state.t=0;state.playing=true;lockUI(true);els.rec.disabled=true;setStatus('녹화 중… 10초 한 루프');
+  rec.start(); const t0=performance.now(); state.recStart=t0; state.recStop=()=>{ if(rec.state!=='inactive') rec.stop(); };
+});
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  if(state.recording){ state.t=(now-state.recStart)/1000; if(state.t>=DUR){state.t=DUR-.001;render(state.t);state.recStop();state.recStart=Infinity;} }
+  else if(state.playing){state.t+=dt;if(state.t>=DUR)state.t-=DUR;}
+  render(state.t);updateUI();requestAnimationFrame(frame);
+}
+rebuild();
+if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('600 100px Inter'),document.fonts.load('400 36px Inter'),document.fonts.load('700 36px "Noto Sans KR"')]).then(rebuild).catch(()=>{});}
+window.__film={setT:t=>{state.t=t;state.playing=false;updateUI();render(t);},state,render,LAY:()=>LAY};
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

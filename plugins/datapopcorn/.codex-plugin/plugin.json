@@ -1,0 +1,20 @@
+{
+  "name": "datapopcorn",
+  "version": "0.1.0",
+  "description": "AI로 직접 써먹는 DataPopcorn 스킬 모음. 콘텐츠 제작과 업무 자동화를 위한 재사용 지침과 예제.",
+  "author": {
+    "name": "DataPopcorn"
+  },
+  "repository": "https://github.com/team-datapopcorn/datapopcorn-skills-shared",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "DataPopcorn",
+    "shortDescription": "AI로 직접 써먹는 스킬 모음",
+    "longDescription": "AI로 직접 써먹는 DataPopcorn 스킬 모음. 콘텐츠 제작과 업무 자동화를 위한 재사용 지침과 예제.",
+    "developerName": "DataPopcorn",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "원하는 작업에 맞는 DataPopcorn 스킬을 골라줘."
+  }
+}

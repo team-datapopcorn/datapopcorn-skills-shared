@@ -1,62 +1,49 @@
-# datapopcorn-skills-shared
+# DataPopcorn
 
-Claude Code로 n8n을 관리할 때 쓸 수 있는 스킬을 모아둔 저장소입니다.
+AI로 직접 써먹는 스킬 모음입니다. 콘텐츠 제작, 업무 자동화 등 다양한 작업의 지침과 실행 예제를 하나의 플러그인으로 제공합니다.
 
-## Claude Code 스킬이란?
+## Claude Code에 설치하기
 
-[Claude Code](https://claude.ai/claude-code)에서 특정 작업을 수행할 때 참고하는 가이드 문서(SKILL.md)입니다. 프로젝트에 설치해두면 자연어 요청만으로 복잡한 작업을 자동으로 처리할 수 있습니다.
+아래 명령은 Claude Code 대화창에서 실행합니다.
 
+```text
+/plugin marketplace add team-datapopcorn/datapopcorn-skills-shared
+/plugin install datapopcorn@datapopcorn
 ```
-사람: "n8n 에러 알림 설정해줘"
-Claude Code: 스킬을 읽고 → 스크립트 생성 → API 호출 → 설정 완료
-```
 
-## 스킬 목록
+설치 후 Claude Code를 다시 시작하고 원하는 스킬을 부르세요.
 
-| 스킬 | 설명 | 필요 환경변수 |
-|------|------|---------------|
-| [n8n-error-setup](skills/n8n-error-setup/) | n8n 워크플로우 에러 알림 일괄 설정 + 신규 워크플로우 자동 감지 배포 | `N8N_URL`, `N8N_API_KEY` |
+| 명령 | 용도 | 추가 준비 |
+|---|---|---|
+| `/datapopcorn:snowball` | 도시 스노글로브 | Chrome |
+| `/datapopcorn:sunset-flight` | 노을 비행 | Chrome |
+| `/datapopcorn:paper-motion` | 종이 브랜드 모션 | Chrome |
+| `/datapopcorn:n8n-error-setup` | n8n 에러 알림 설정 | N8N_URL, N8N_API_KEY |
 
-> 새로운 스킬이 계속 추가될 예정입니다. Watch 또는 Star로 업데이트를 받아보세요.
+영상 예제는 Chrome에서 WebM으로 저장하며 MP4 변환에는 FFmpeg가 필요합니다. AI 이용 요금은 별도입니다. n8n 스킬은 요청해 실행할 때 별도 연결 정보를 준비합니다.
 
-## 설치 방법
-
-### 방법 1: npx skills add (추천)
+## 로컬 확인
 
 ```bash
-npx skills add team-datapopcorn/datapopcorn-skills-shared --skill n8n-error-setup
+claude --plugin-dir ./plugins/datapopcorn
+claude plugin validate ./plugins/datapopcorn
+claude plugin validate ./.claude-plugin/marketplace.json
 ```
 
-### 방법 2: 설치 스크립트
+## 스킬 하나만 설치하기
 
 ```bash
-git clone https://github.com/team-datapopcorn/datapopcorn-skills-shared.git /tmp/datapopcorn-skills-shared
-/tmp/datapopcorn-skills-shared/install.sh n8n-error-setup /path/to/your-project
+./install.sh snowball /path/to/your-project
 ```
 
-### 방법 3: 수동 복사
+개별 설치는 `/snowball`처럼 부릅니다. 플러그인 설치와 중복해서 설치할 필요는 없습니다.
 
-```bash
-mkdir -p your-project/.claude/skills/n8n-error-setup
-cp skills/n8n-error-setup/SKILL.md your-project/.claude/skills/n8n-error-setup/
-```
+## 구조와 확장
 
-## 사용법
+정본 스킬은 `plugins/datapopcorn/skills/`에 있습니다. 새 작업은 이 폴더에 스킬을 추가하고 플러그인 버전을 올려 배포합니다. 모션그래픽에 한정하지 않습니다.
 
-1. 스킬 설치
-2. 환경변수 설정 (각 스킬 폴더의 `.env.example` 참고)
-3. Claude Code에서 자연어로 요청하면 끝
-
-## 영상으로 보기
-
-| 스킬 | 영상 |
-|------|------|
-| n8n-error-setup | [n8n 워크플로우 100개에 에러 알림 한 번에 심는 법](유튜브 URL) |
-
-## 요구사항
-
-- [Claude Code](https://claude.ai/claude-code) 설치 필요
+Claude Code용 `.claude-plugin/plugin.json`과 Codex용 `.codex-plugin/plugin.json`이 같은 스킬을 가리킵니다. 위 설치 명령은 Claude Code용이며 Codex 설치·실행은 별도 검증이 필요합니다.
 
 ## 라이선스
 
-MIT
+MIT. 예제의 외부 라이브러리와 글꼴은 각 스킬의 THIRD_PARTY.md를 확인하세요.

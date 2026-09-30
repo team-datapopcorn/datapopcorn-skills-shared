@@ -8,7 +8,7 @@ set -e
 
 SKILL_NAME="${1:?사용법: ./install.sh <skill-name> [target-dir]}"
 TARGET_DIR="${2:-.}"
-SKILL_SRC="$(cd "$(dirname "$0")" && pwd)/skills/${SKILL_NAME}"
+SKILL_SRC="$(cd "$(dirname "$0")" && pwd)/plugins/datapopcorn/skills/${SKILL_NAME}"
 SKILL_DST="${TARGET_DIR}/.claude/skills/${SKILL_NAME}"
 
 # 스킬 존재 확인
@@ -16,13 +16,13 @@ if [ ! -d "$SKILL_SRC" ]; then
     echo "스킬을 찾을 수 없습니다: ${SKILL_NAME}"
     echo ""
     echo "사용 가능한 스킬:"
-    ls -1 "$(cd "$(dirname "$0")" && pwd)/skills/"
+    ls -1 "$(cd "$(dirname "$0")" && pwd)/plugins/datapopcorn/skills/"
     exit 1
 fi
 
 # 설치
 mkdir -p "$SKILL_DST"
-cp -r "$SKILL_SRC"/SKILL.md "$SKILL_DST/"
+cp -R "$SKILL_SRC"/. "$SKILL_DST/"
 echo "설치 완료: ${SKILL_NAME} → ${SKILL_DST}"
 
 # .env.example 복사 (있으면)
