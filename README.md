@@ -19,6 +19,7 @@ AI로 직접 써먹는 스킬 모음입니다. 콘텐츠 제작, 업무 자동�
 | `/datapopcorn:sunset-flight` | 노을 비행 | Chrome |
 | `/datapopcorn:paper-motion` | 종이 브랜드 모션 | Chrome |
 | `/datapopcorn:n8n-error-setup` | n8n 에러 알림 설정 | N8N_URL, N8N_API_KEY |
+| `/datapopcorn:engineering-shorts` | "원래는 ~였다" 반전 공학 쇼츠 (AI 재현, 30~40초) | Google Flow 계정(무료 하루 50크레딧), Chrome, 이미지 생성 도구, Remotion 권장 |
 
 영상 예제는 Chrome에서 WebM으로 저장하며 MP4 변환에는 FFmpeg가 필요합니다. AI 이용 요금은 별도입니다. n8n 스킬은 요청해 실행할 때 별도 연결 정보를 준비합니다.
 

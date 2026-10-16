@@ -1,0 +1,53 @@
+{
+ "version": 1,
+ "jobs": [
+  {
+   "id": "s1-white-pyramid",
+   "mode": "generate",
+   "prompt": "The Great Pyramid of Giza in ancient Egypt around 2500 BC, shortly after completion: its four faces covered in perfectly smooth, polished brilliant white limestone casing that gleams and reflects the bright desert sun, sharp crisp edges up to a pointed apex, standing on golden sand with the green Nile valley and palm trees in the far distance. Low angle from the desert floor looking up. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s1-white-pyramid-v01.png"
+  },
+  {
+   "id": "s2-today-steps",
+   "mode": "generate",
+   "prompt": "The Great Pyramid of Giza as it looks today: rough, weathered, yellow-brown stepped core blocks forming huge uneven stairs, no smooth casing, a few tiny tourists from behind near the base for scale, clear modern daylight, hazy blue sky. Close three-quarter view along one edge showing the giant steps. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s2-today-steps-v01.png"
+  },
+  {
+   "id": "s3-casing-closeup",
+   "mode": "generate",
+   "prompt": "Close view of the lower corner of the Great Pyramid in ancient times: a flawless, flat, seamless face of polished white limestone casing blocks fitted so tightly the joints are barely visible, the surface catching sunlight like a mirror, a few ancient Egyptian workers in white linen kilts, small and seen from behind, finishing the surface at the base. Bright midday sun. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s3-casing-closeup-v01.png"
+  },
+  {
+   "id": "s4-giza-aerial",
+   "mode": "generate",
+   "prompt": "High aerial view of the three pyramids of Giza in ancient times, all clad in smooth gleaming white limestone casing, the Great Pyramid the largest, aligned diagonally on the desert plateau, small temples and causeways leading toward the green Nile floodplain. Warm late-afternoon light, long shadows. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s4-giza-aerial-v01.png"
+  },
+  {
+   "id": "s5-stripped-question",
+   "mode": "generate",
+   "prompt": "The Great Pyramid in a transitional state at dusk: large patches of white casing missing on its faces, revealing the rough yellow-brown stepped core beneath, the remaining white sections glowing in the last light, empty desert around. Dramatic but realistic, slightly low angle. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s5-stripped-question-v01.png"
+  },
+  {
+   "id": "s6-medieval-removal",
+   "mode": "generate",
+   "prompt": "At the foot of the Great Pyramid in medieval times, around the 12th century: workers in long robes and head wraps, small and seen from behind, prying loose large white casing blocks with levers and loading them onto ox-drawn carts, a pile of white blocks on the sand, the distant minarets and domes of medieval Cairo on the horizon. Dusty warm light. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s6-medieval-removal-v01.png"
+  },
+  {
+   "id": "s7-19th-century",
+   "mode": "generate",
+   "prompt": "The Great Pyramid in the 19th century, almost completely stripped down to its stepped yellow-brown core, only a few white casing blocks left lying at the base, a small group of 19th-century travelers in coats and hats and a camel, small and seen from behind, looking up at it. Soft natural light, slightly faded colors. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s7-19th-century-v01.png"
+  },
+  {
+   "id": "s8-khafre-cap",
+   "mode": "generate",
+   "prompt": "The Pyramid of Khafre at Giza today seen from below: its upper part still covered with a cap of smooth pale limestone casing near the apex, while the lower part is rough stepped core blocks, clear blue sky, a few tiny tourists at the base from behind for scale. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s8-khafre-cap-v01.png"
+  }
+ ]
+}
