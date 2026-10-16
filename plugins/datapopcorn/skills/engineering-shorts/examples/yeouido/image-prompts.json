@@ -1,0 +1,53 @@
+{
+ "version": 1,
+ "jobs": [
+  {
+   "id": "s1-park-runway",
+   "mode": "generate",
+   "prompt": "High aerial view over today's Yeouido Park in Seoul on a clear afternoon: a long, narrow green park with walking paths and trees stretching north to south between dense high-rise office towers, the domed National Assembly building visible in the distance near the Han River. A faint ghostly translucent outline of an old straight airport runway is overlaid along the length of the park, as if the past is showing through. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s1-park-runway-v01.png"
+  },
+  {
+   "id": "s2-1916-sand-runway",
+   "mode": "generate",
+   "prompt": "Wide view of a flat sandy river island in the Han River around 1916: a single long straight packed-earth runway, about 600 meters, laid across pale sand, one small wooden hangar beside it, the river and distant low mountains under a hazy sky. Early 20th century, no modern buildings at all. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s2-1916-sand-runway-v01.png"
+  },
+  {
+   "id": "s3-1922-biplane-crowd",
+   "mode": "generate",
+   "prompt": "An early 1920s single-engine biplane taking off from a dirt runway on a sandy river island, seen from behind a huge crowd of thousands of spectators in 1920s Korean clothing (white hanbok, hats) packed along the riverbank, all small and seen from behind, looking up at the plane. Spring day, dust kicked up by the propeller. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s3-1922-biplane-crowd-v01.png"
+  },
+  {
+   "id": "s4-1954-airport",
+   "mode": "generate",
+   "prompt": "A small 1950s airport on a river island: a modest low concrete terminal building with a control tower, a twin-propeller passenger airliner parked on the paved apron with passengers in 1950s coats walking toward it, small and from behind. Overcast mid-century atmosphere, film-like color. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s4-1954-airport-v01.png"
+  },
+  {
+   "id": "s5-flooded-runway",
+   "mode": "generate",
+   "prompt": "The same 1950s river-island airport runway flooded by the overflowing Han River: muddy brown water covering the paved runway, a parked propeller plane standing in shallow water, the terminal in the background, heavy grey rain clouds. Dramatic but realistic. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s5-flooded-runway-v01.png"
+  },
+  {
+   "id": "s6-empty-runway",
+   "mode": "generate",
+   "prompt": "A long empty paved airport runway on a river island at dusk around 1970, faded markings, weeds in cracks, no planes, a closed small terminal in the distance, a few construction cranes and early apartment blocks beginning to rise on the horizon. Quiet, ending mood. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s6-empty-runway-v01.png"
+  },
+  {
+   "id": "s7-asphalt-plaza",
+   "mode": "generate",
+   "prompt": "A vast empty asphalt plaza in Seoul in the 1970s-80s on the site of a former runway, extremely long and wide, a few people riding bicycles far away, small and from behind, new office buildings at the edges, the National Assembly dome in the far distance. Hot summer haze. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s7-asphalt-plaza-v01.png"
+  },
+  {
+   "id": "s8-c47-park",
+   "mode": "generate",
+   "prompt": "A green 1940s twin-propeller military transport aircraft (Douglas C-47 style, dark green paint) displayed on the lawn of a modern city park in Seoul, surrounded by trees and walking paths, high-rise office towers behind, a few visitors small and from behind. Bright clear afternoon. Photorealistic 3D documentary reconstruction, vertical 9:16, natural light, realistic colors, crisp detail, believable scale. No text, no letters, no numbers, no signs, no logos, no flags, no watermark. No close-up faces; people small, from behind or in silhouette.",
+   "out": "scenes/s8-c47-park-v01.png"
+  }
+ ]
+}
